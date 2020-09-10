@@ -57,15 +57,20 @@ const handleSubmit = () => {
 }
 
 const handleBlur = (event) => {
-  console.log(event.target.name,event.target.value)
+  let isFormValid = true;
   if (event.target.name === 'email') {
-    const isEmailValid = /\S+@\S+\.\S+/.test(event.target.value);
-    console.log(isEmailValid)
+    isFormValid = /\S+@\S+\.\S+/.test(event.target.value); 
   }
   if (event.target.name === 'password') {
     const isPassWordValid = event.target.value.length > 5;
     const passwordHasNumber = /\d{3}/.test (event.target.value);
-    console.log(passwordHasNumber && isPassWordValid)
+    isFormValid = passwordHasNumber && isPassWordValid ;
+  }
+  if (isFormValid) {
+    const newUserInfo = {...user};
+    newUserInfo[event.target.name] = event.target.value;
+    setUser(newUserInfo);
+    
   }
 }
 
