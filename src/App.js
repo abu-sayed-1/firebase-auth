@@ -19,6 +19,8 @@ function App() {
   })
 
 const provider = new firebase.auth.GoogleAuthProvider();
+const fbProvider = new firebase.auth.FacebookAuthProvider();
+// handle Sign In -------------------------------------
  const handleSingIn = () => {
    firebase.auth().signInWithPopup(provider)
    .then(res => {
@@ -39,7 +41,29 @@ const provider = new firebase.auth.GoogleAuthProvider();
    })
 
  }
+// Facebook Sign In here||----------------------------------------
 
+ const handleFBSignIn = () =>{
+  firebase.auth().signInWithPopup(fbProvider).then(function(result) {
+    // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+    var token = result.credential.accessToken;
+    // The signed-in user info.
+    var user = result.user;
+    // ...
+  }).catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // The email of the user's account used.
+    var email = error.email;
+    // The firebase.auth.AuthCredential type that was used.
+    var credential = error.credential;
+    // ...
+  });
+ }
+// ---------------------------------------------------------
+
+// handle Sign Out ---------------------------
  const handleSignOut = () => {
    firebase.auth().signOut()
    .then(res =>{
@@ -59,6 +83,7 @@ const provider = new firebase.auth.GoogleAuthProvider();
    })
  }
 
+// handle Submit Area--------------------------------------------------------
 const handleSubmit = (e) => {
   console.log(user.email,user.password);
   if (newUser && user.email && user.password) {
@@ -97,7 +122,9 @@ const handleSubmit = (e) => {
   }
 e.preventDefault();
 }
-
+// -----------------------------------------------------------------------
+ 
+// update User Name ----
 const updateUserName = name => {
       var user = firebase.auth().currentUser;
 
@@ -112,7 +139,9 @@ const updateUserName = name => {
     });
 }
 
+//-------------------------------------------
 
+// input condition Set here
 const handleBlur = (event) => {
   let isFieldValid = true;
   if (event.target.name === 'email') {
@@ -131,6 +160,8 @@ const handleBlur = (event) => {
   }
 }
 
+
+
   return (
     <div style={{marginLeft:'45%',marginTop:'10%'}}>
        {
@@ -139,7 +170,8 @@ const handleBlur = (event) => {
           :<button onClick={handleSingIn} style={{color:'red'}}>sign in</button>
       }
       <br/>
-      <button>Sign In using Facebook</button>
+      <button onClick={handleFBSignIn}>Sign In using Facebook</button>
+      {/* Facebook Sign In button here ^^*/}
       {
         user.isSignIn  && <div>
         <p>Welcome,{user.name}</p>
@@ -163,7 +195,6 @@ const handleBlur = (event) => {
  
           <p style={{color:'red'}}>{user.error}</p>
          {user.success && <p style={{color:'green'}}>User { newUser ? "Created" :"Logged In"} SuccessFully </p>} 
- <h2>rakib</h2>
      </div>
   );
 }
