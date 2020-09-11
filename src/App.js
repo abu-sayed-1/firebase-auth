@@ -11,7 +11,10 @@ function App() {
     isSignIn:false,
     name:'',
     email:'',
-    photo:''
+    photo:'',
+    password:'',
+    error:''
+  
   })
 
 const provider = new firebase.auth.GoogleAuthProvider();
@@ -43,7 +46,10 @@ const provider = new firebase.auth.GoogleAuthProvider();
        isSignIn:false,
        name:'',
        photo:'',
-       email:''
+       email:'',
+       error:'',
+       success:false
+   
      }
      setUser(signedOutUser)
    })
@@ -52,21 +58,38 @@ const provider = new firebase.auth.GoogleAuthProvider();
    })
  }
 
-const handleSubmit = () => {
-
+const handleSubmit = (e) => {
+  console.log(user.email,user.password);
+  if (user.email && user.password) {
+    firebase.auth().createUserWithEmailAndPassword(user.email,user.password)
+      .then(res => {
+        const newUserInfo = {...user} ;
+        newUserInfo.error = '';
+        newUserInfo.success = true;
+        setUser(newUserInfo);
+    })
+    .catch(error => {
+      const newUserInfo = {...user};
+      newUserInfo.error = error.message;
+      newUserInfo.success = false;
+      setUser(newUserInfo);
+    
+    });
+  }
+e.preventDefault();
 }
 
 const handleBlur = (event) => {
-  let isFormValid = true;
+  let isFieldValid = true;
   if (event.target.name === 'email') {
-    isFormValid = /\S+@\S+\.\S+/.test(event.target.value); 
+    isFieldValid = /\S+@\S+\.\S+/.test(event.target.value); 
   }
   if (event.target.name === 'password') {
     const isPassWordValid = event.target.value.length > 5;
     const passwordHasNumber = /\d{3}/.test (event.target.value);
-    isFormValid = passwordHasNumber && isPassWordValid ;
+    isFieldValid = passwordHasNumber && isPassWordValid ;
   }
-  if (isFormValid) {
+  if (isFieldValid) {
     const newUserInfo = {...user};
     newUserInfo[event.target.name] = event.target.value;
     setUser(newUserInfo);
@@ -89,23 +112,90 @@ const handleBlur = (event) => {
         <img src={user.photo} alt=""/>
 
       </div>
-
-
       } 
+        
        <form onSubmit={handleSubmit}>
+         <input type="text" name="name" onBlur={handleBlur} placeholder="You Name" required />
+         <br/>
          <input type="text" name="email" onBlur={handleBlur} placeholder="Enter your Email" required/>
          <br/>
          <input type="password" name="password" onBlur={handleBlur}  id="" placeholder="Enter your password" required/>
          <br/>
          <input type="submit" value="Submit"/>
          </form>       
-
-      
+ 
+    <p style={{color:'red'}}>{user.error}</p>
+     {user.success && <p style={{color:'green'}}>User Created SuccessFully </p>
+}
      </div>
   );
 }
 
 export default App;
+ 
+
+
+ 
+// Module No: 42.. video No:1/2/3/4/
+
+// const handleSubmit = () => {
+
+// }
+
+// const handleBlur = (event) => {
+//   let isFieldValid = true;
+//   if (event.target.name === 'email') {
+//     isFieldValid = /\S+@\S+\.\S+/.test(event.target.value); 
+//   }
+//   if (event.target.name === 'password') {
+//     const isPassWordValid = event.target.value.length > 5;
+//     const passwordHasNumber = /\d{3}/.test (event.target.value);
+//     isFieldValid = passwordHasNumber && isPassWordValid ;
+//   }
+//   if (isFieldValid) {
+//     const newUserInfo = {...user};
+//     newUserInfo[event.target.name] = event.target.value;
+//     setUser(newUserInfo);
+    
+//   }
+// }
+
+//   return (
+//     <div style={{marginLeft:'45%',marginTop:'10%'}}>
+//        {
+//         user.isSignIn ? 
+//           <button onClick={handleSignOut} style={{color:'red'}}>sign out</button>
+//           :<button onClick={handleSingIn} style={{color:'red'}}>sign in</button>
+//       }
+
+//       {
+//         user.isSignIn  && <div>
+//         <p>Welcome,{user.name}</p>
+//         <p>Email:{user.email}</p>
+//         <img src={user.photo} alt=""/>
+
+//       </div>
+
+
+//       } 
+//        <form onSubmit={handleSubmit}>
+//          <input type="text" name="name" onBlur={handleBlur}  id="" placeholder="Your Name" required/>
+          //<br/> 
+//          <input type="text" name="email" onBlur={handleBlur} placeholder="Enter your Email" required/>
+//          <br/>
+//          <input type="password" name="password" onBlur={handleBlur}  id="" placeholder="Enter your password" required/>
+//          <br/>
+//          <input type="submit" value="Submit"/>
+//          </form>       
+
+      
+//      </div>
+//   );
+// }
+
+// export default App;
+ 
+ 
  
 
 // Module No: 42.. video No:1/2/3/
